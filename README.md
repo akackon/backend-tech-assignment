@@ -1,517 +1,271 @@
-# Quiz API# Quiz API# Quiz API
+# Quiz API
 
+## Assignment
 
+The assignment is to build a light weight restful API server to power a quiz UI.
 
-A RESTful API server for managing quizzes and questions, built with Express, TypeScript, and MongoDB.
+## Functional requirements
 
+- Implement 2 API resources
+  - A Quiz resource, providing at a minimum a title, description and candidate instructions.
+  - A Question resource. This should support both free text and multiple choice questions.
+  - Any additional resources you feel are necessary for a functional client experience.
+- The API should follow the [OpenAPI v3](https://swagger.io/specification/) and [JSON:API](https://jsonapi.org/) Specifications.
+- Provide implementations for CRUD operations for all resources.
+- The server should persist data records to a NoSQL database.
 
+## Tech stack
 
-## Features ImplementedA RESTful API server for managing quizzes and questions, built with Express, TypeScript, and MongoDB.## Assignment
+Your solution should be written in typescript. Preferably use an express powered server to host the API.
 
+Feel free to use whatever tools you’re comfortable with (IDE, workflow, AI assistants/LLMs), just as you would in your normal day-to-day work.
 
+This repository has already been bootstrapped to provide the basic project structure, extend it as you need.
+
+## Timebox
+
+You should aim to spend no more than 3 hours. If you don’t finish everything, that’s fine. We’ll talk about trade-offs during the interview.
+
+## Submission
+
+Send a link to the repo, which should contain a short README.md with:
+
+- Instructions to run
+- Time spent
+- Any trade-offs made and what you would improve with more time
+
+If you choose to use this repository as your base, please do not create a public fork.
+
+## Using this repo
+
+This repository provides a basic application containing an express server with stubbed routes for quiz and question.
+
+To run:
+
+```
+npm install
+npm run build
+npm run start
+```
+
+To run in debug:
+
+```
+npm install
+npm run debug
+```
+
+---
+
+## Implementation Details
+
+### Features Implemented
 
 ✅ **Core Requirements:**
 
 - Quiz resource with title, description, and candidate instructions
-
-- Question resource supporting both free-text and multiple-choice questions## Features ImplementedThe assignment is to build a light weight restful API server to power a quiz UI.
-
+- Question resource supporting both free-text and multiple-choice questions
 - Full CRUD operations for both resources
-
 - MongoDB Atlas for data persistence
-
 - OpenAPI v3 specification with interactive Swagger UI
+- JSON:API compliant responses
 
-- JSON:API compliant responses✅ **Core Requirements:**## Functional requirements
-
-
-
-✅ **Additional Features:**- Quiz resource with title, description, and candidate instructions
+✅ **Additional Features:**
 
 - Many-to-many relationship between quizzes and questions
-
-- Questions can belong to multiple quizzes- Question resource supporting both free-text and multiple-choice questions - Implement 2 API resources
-
+- Questions can belong to multiple quizzes
 - Relationship endpoints for fetching quiz questions
-
-- Environment variable configuration for security- Full CRUD operations for both resources   - A Quiz resource, providing at a minimum a title, description and candidate instructions.
-
+- Environment variable configuration for security
 - Cascade cleanup when quizzes are deleted
-
-- MongoDB Atlas for data persistence   - A Question resource. This should support both free text  and multiple choice questions.
 
 ## Instructions to Run
 
-- OpenAPI v3 specification with interactive Swagger UI   - Any additional resources you feel are necessary for a functional client experience.
-
 ### Prerequisites
 
-- Node.js (v18 or higher)- JSON:API compliant responses - The API should follow the [OpenAPI v3](https://swagger.io/specification/) and [JSON:API](https://jsonapi.org/) Specifications.
-
+- Node.js (v18 or higher)
 - npm
+- MongoDB Atlas account (or local MongoDB instance)
 
-- MongoDB Atlas account (or local MongoDB instance) - Provide implementations for CRUD operations for all resources.
+### Setup Steps
 
-
-
-### Setup✅ **Additional Features:** - The server should persist data records to a NoSQL database.
-
-
-
-1. **Clone the repository**- Many-to-many relationship between quizzes and questions
+1. **Install dependencies**
 
    ```bash
-
-   git clone <repository-url>- Questions can belong to multiple quizzes
-
-   cd backend-tech-assignment
-
-   ```- Relationship endpoints for fetching quiz questions## Tech stack
-
-
-
-2. **Install dependencies**- Environment variable configuration for security
-
-   ```bash
-
-   npm install- Cascade cleanup when quizzes are deletedYour solution should be written in typescript. Preferably use an express powered server to host the API.
-
+   npm install
    ```
 
-
-
-3. **Configure environment variables**
-
-   ## Instructions to RunFeel free to use whatever tools you’re comfortable with (IDE, workflow, AI assistants/LLMs), just as you would in your normal day-to-day work.
+2. **Configure environment variables**
 
    Create a `.env` file in the root directory (use `.env.example` as a template):
 
    ```bash
-
    cp .env.example .env
-
-   ```### PrerequisitesThis repository has already been bootstrapped to provide the basic project structure, extend it as you need.
-
-   
-
-   Update the `.env` file with your MongoDB connection string:- Node.js (v18 or higher)
-
    ```
 
-   MONGODB_URI=mongodb+srv://<username>:<password>@<cluster>.mongodb.net/quiz-api- npm## Timebox
+   Update the `.env` file with your MongoDB connection string:
 
+   ```env
+   MONGODB_URI=mongodb+srv://<username>:<password>@<cluster>.mongodb.net/quiz-api
    PORT=3000
+   ```
 
-   ```- MongoDB Atlas account (or local MongoDB instance)
-
-
-
-4. **Build the project**You should aim to spend no more than 3 hours. If you don’t finish everything, that’s fine. We’ll talk about trade-offs during the interview.
+3. **Build the project**
 
    ```bash
-
-   npm run build### Setup
-
+   npm run build
    ```
 
-## Submission
-
-5. **Start the server**
-
-   1. **Clone the repository**
+4. **Start the server**
 
    For production:
 
-   ```bash   ```bashSend a link to the repo, which should contain a short README.md with:
-
-   npm run start
-
-   ```   git clone <repository-url>
-
-   
-
-   For development (with hot reload and debugging):   cd backend-tech-assignment- Instructions to run
-
    ```bash
-
-   npm run debug   ```- Time spent
-
+   npm run start
    ```
 
-- Any trade-offs made and what you would improve with more time
+   For development (with hot reload and debugging):
 
-6. **Access the API**
+   ```bash
+   npm run debug
+   ```
 
-   - API Server: `http://localhost:3000`2. **Install dependencies**
+5. **Access the API**
+   - API Server: http://localhost:3000
+   - Swagger UI Documentation: http://localhost:3000/api-docs
 
-   - Swagger UI Documentation: `http://localhost:3000/api-docs`
+### API Endpoints
 
-   ```bashIf you choose to use this repository as your base, please do not create a public fork.
+**Quizzes:**
 
-## API Endpoints
-
-   npm install
-
-### Quizzes
-
-- `POST /quizzes` - Create a new quiz   ```## Using this repo
-
+- `POST /quizzes` - Create a new quiz
 - `GET /quizzes` - Get all quizzes
-
 - `GET /quizzes/:id` - Get a quiz by ID
-
 - `GET /quizzes/:id?include=questions` - Get quiz with related questions (JSON:API format)
-
-- `GET /quizzes/:id/questions` - Get all questions for a specific quiz3. **Configure environment variables**This repository provides a basic application containing an express server with stubbed routes for quiz and question.
-
+- `GET /quizzes/:id/questions` - Get all questions for a specific quiz
 - `PATCH /quizzes/:id` - Update a quiz
+- `DELETE /quizzes/:id` - Delete a quiz
 
-- `DELETE /quizzes/:id` - Delete a quiz   
-
-
-
-### Questions   Create a `.env` file in the root directory (use `.env.example` as a template):To run:
+**Questions:**
 
 - `POST /questions` - Create a new question
-
-- `GET /questions` - Get all questions   ```bash
-
-- `GET /questions?quizId=<id>` - Filter questions by quiz ID
-
-- `GET /questions/:id` - Get a question by ID   cp .env.example .env```
-
-- `PATCH /questions/:id` - Update a question
-
-- `DELETE /questions/:id` - Delete a question   ```npm install
-
-
-
-## Example Requests   npm run build
-
-
-
-### Create a Quiz   Update the `.env` file with your MongoDB connection string:npm run start
-
-```bash
-
-curl -X POST http://localhost:3000/quizzes \   ``````
-
-  -H "Content-Type: application/json" \
-
-  -d '{   MONGODB_URI=mongodb+srv://<username>:<password>@<cluster>.mongodb.net/quiz-api
-
-    "title": "JavaScript Basics",
-
-    "description": "Test your knowledge of JavaScript fundamentals",   PORT=3000To run in debug:
-
-    "instructions": "Answer all questions. You have 30 minutes."
-
-  }'   ``````
-
-```
-
-npm install
-
-### Create a Multiple Choice Question
-
-```bash4. **Build the project**npm run debug
-
-curl -X POST http://localhost:3000/questions \
-
-  -H "Content-Type: application/json" \   ```bash```
-
-  -d '{
-
-    "quizIds": ["<quiz-id>"],   npm run build
-
-    "text": "What is a closure in JavaScript?",   ```
-
-    "type": "multiple-choice",
-
-    "choices": [5. **Start the server**
-
-      {"text": "A function with access to outer scope", "isCorrect": true},   
-
-      {"text": "A loop construct", "isCorrect": false}   For production:
-
-    ]   ```bash
-
-  }'   npm run start
-
-```   ```
-
-   
-
-### Create a Free Text Question   For development (with hot reload and debugging):
-
-```bash   ```bash
-
-curl -X POST http://localhost:3000/questions \   npm run debug
-
-  -H "Content-Type: application/json" \   ```
-
-  -d '{
-
-    "quizIds": ["<quiz-id>"],6. **Access the API**
-
-    "text": "Explain what hoisting is in JavaScript",   - API Server: `http://localhost:3000`
-
-    "type": "free-text",   - Swagger UI Documentation: `http://localhost:3000/api-docs`
-
-    "correctAnswer": "Hoisting is JavaScript's behavior of moving declarations to the top"
-
-  }'## API Endpoints
-
-```
-
-### Quizzes
-
-## Time Spent- `POST /quizzes` - Create a new quiz
-
-- `GET /quizzes` - Get all quizzes
-
-**Total: ~3 hours**- `GET /quizzes/:id` - Get a quiz by ID
-
-- `GET /quizzes/:id?include=questions` - Get quiz with related questions (JSON:API format)
-
-- Project setup and MongoDB integration: 45 minutes- `GET /quizzes/:id/questions` - Get all questions for a specific quiz
-
-- CRUD operations implementation: 60 minutes- `PATCH /quizzes/:id` - Update a quiz
-
-- JSON:API compliance and error handling: 30 minutes- `DELETE /quizzes/:id` - Delete a quiz
-
-- Swagger/OpenAPI documentation: 30 minutes
-
-- Relationship endpoints and many-to-many support: 30 minutes### Questions
-
-- Environment variables and MongoDB Atlas setup: 15 minutes- `POST /questions` - Create a new question
-
 - `GET /questions` - Get all questions
-
-## Trade-offs and Future Improvements- `GET /questions?quizId=<id>` - Filter questions by quiz ID
-
+- `GET /questions?quizId=<id>` - Filter questions by quiz ID
 - `GET /questions/:id` - Get a question by ID
-
-### Trade-offs Made (Due to Time Constraints)- `PATCH /questions/:id` - Update a question
-
+- `PATCH /questions/:id` - Update a question
 - `DELETE /questions/:id` - Delete a question
 
-1. **Authentication/Authorization**
+### Example Usage
 
-   - Not implemented - all endpoints are publicly accessible## Example Requests
-
-   - **Would add:** JWT-based authentication, role-based access control
-
-### Create a Quiz
-
-2. **Input Validation**```bash
-
-   - Basic validation exists but could be more comprehensivecurl -X POST http://localhost:3000/quizzes \
-
-   - **Would add:** joi or zod for schema validation, more detailed error messages  -H "Content-Type: application/json" \
-
-  -d '{
-
-3. **Testing**    "title": "JavaScript Basics",
-
-   - No unit or integration tests    "description": "Test your knowledge of JavaScript fundamentals",
-
-   - **Would add:** Jest for unit tests, Supertest for API integration tests    "instructions": "Answer all questions. You have 30 minutes."
-
-  }'
-
-4. **Pagination**```
-
-   - GET endpoints return all records without pagination
-
-   - **Would add:** Cursor-based or offset pagination with metadata### Create a Multiple Choice Question
+Create a quiz:
 
 ```bash
-
-5. **Error Handling**curl -X POST http://localhost:3000/questions \
-
-   - Basic error handling exists but could be more granular  -H "Content-Type: application/json" \
-
-   - **Would add:** Custom error classes, detailed error codes, better logging  -d '{
-
-    "quizIds": ["<quiz-id>"],
-
-### What I Would Improve With More Time    "text": "What is a closure in JavaScript?",
-
-    "type": "multiple-choice",
-
-1. **Data Validation & Constraints**    "choices": [
-
-   - Add mongoose validators for better data integrity      {"text": "A function with access to outer scope", "isCorrect": true},
-
-   - Validate quiz IDs exist when creating/updating questions      {"text": "A loop construct", "isCorrect": false}
-
-   - Add unique constraints where appropriate    ]
-
-  }'
-
-2. **API Enhancements**```
-
-   - Add filtering, sorting, and search capabilities
-
-   - Implement sparse fieldsets (JSON:API feature)### Create a Free Text Question
-
-   - Add bulk operations (create/update multiple resources)```bash
-
-   - Add question ordering within quizzescurl -X POST http://localhost:3000/questions \
-
+curl -X POST http://localhost:3000/quizzes \
   -H "Content-Type: application/json" \
+  -d '{
+    "title": "JavaScript Basics",
+    "description": "Test your knowledge of JavaScript fundamentals",
+    "instructions": "Answer all questions. You have 30 minutes."
+  }'
+```
 
-3. **Documentation**  -d '{
+Create a multiple-choice question:
 
-   - Add more detailed OpenAPI examples and descriptions    "quizIds": ["<quiz-id>"],
+```bash
+curl -X POST http://localhost:3000/questions \
+  -H "Content-Type: application/json" \
+  -d '{
+    "quizIds": ["<quiz-id>"],
+    "text": "What is a closure in JavaScript?",
+    "type": "multiple-choice",
+    "choices": [
+      {"text": "A function with access to outer scope", "isCorrect": true},
+      {"text": "A loop construct", "isCorrect": false}
+    ]
+  }'
+```
 
-   - Create a Postman collection    "text": "Explain what hoisting is in JavaScript",
+## Time Spent
 
-   - Add API versioning strategy    "type": "free-text",
+**Total: ~3 hours**
 
-    "correctAnswer": "Hoisting is JavaScript's behavior of moving declarations to the top"
-
-4. **Performance**  }'
-
-   - Add database indexing for commonly queried fields```
-
-   - Implement caching (Redis) for frequently accessed data
-
-   - Add request rate limiting## Time Spent
-
-
-
-5. **Developer Experience****Total: ~3 hours**
-
-   - Add database seeding scripts for local development
-
-   - Add Docker support for easy setup- Project setup and MongoDB integration: 45 minutes
-
-   - Add pre-commit hooks (husky) for linting and formatting- CRUD operations implementation: 60 minutes
-
-   - Add CI/CD pipeline- JSON:API compliance and error handling: 30 minutes
-
+- Project setup and MongoDB integration: 45 minutes
+- CRUD operations implementation: 60 minutes
+- JSON:API compliance and error handling: 30 minutes
 - Swagger/OpenAPI documentation: 30 minutes
+- Relationship endpoints and many-to-many support: 30 minutes
+- Environment variables and MongoDB Atlas setup: 15 minutes
 
-6. **Additional Features**- Relationship endpoints and many-to-many support: 30 minutes
+## Trade-offs Made
 
-   - Quiz attempts/submissions tracking- Environment variables and MongoDB Atlas setup: 15 minutes
+Due to the 3-hour time constraint, the following trade-offs were made:
 
-   - Question randomization
+1. **Authentication/Authorization** - Not implemented. All endpoints are publicly accessible.
 
-   - Time limits for quizzes## Trade-offs and Future Improvements
+   - Would add: JWT-based authentication, role-based access control
 
-   - Question categories/tags
+2. **Input Validation** - Basic validation exists but could be more comprehensive.
 
-   - Question difficulty levels### Trade-offs Made (Due to Time Constraints)
+   - Would add: joi or zod for schema validation, detailed error messages
 
-   - Analytics and reporting
+3. **Testing** - No unit or integration tests implemented.
 
-1. **Authentication/Authorization**
+   - Would add: Jest for unit tests, Supertest for API integration tests
 
-7. **Code Quality**   - Not implemented - all endpoints are publicly accessible
+4. **Pagination** - GET endpoints return all records without pagination.
 
-   - Add comprehensive logging (Winston or Pino)   - **Would add:** JWT-based authentication, role-based access control
+   - Would add: Cursor-based or offset pagination with metadata
 
-   - Add monitoring and health check endpoints
+5. **Error Handling** - Basic error handling exists but could be more granular.
+   - Would add: Custom error classes, detailed error codes, structured logging
 
-   - Implement repository pattern for better separation of concerns2. **Input Validation**
+## What I Would Improve With More Time
 
-   - Add request/response DTOs for better type safety   - Basic validation exists but could be more comprehensive
+### Data Validation & Constraints
 
-   - **Would add:** joi or zod for schema validation, more detailed error messages
+- Add mongoose validators for better data integrity
+- Validate quiz IDs exist when creating/updating questions
+- Add unique constraints where appropriate
 
-## Tech Stack
+### API Enhancements
 
-3. **Testing**
+- Add filtering, sorting, and search capabilities
+- Implement sparse fieldsets (JSON:API feature)
+- Add bulk operations (create/update multiple resources)
+- Add question ordering within quizzes
+- API versioning strategy
 
-- **Runtime:** Node.js   - No unit or integration tests
+### Performance
 
-- **Language:** TypeScript   - **Would add:** Jest for unit tests, Supertest for API integration tests
+- Add database indexing for commonly queried fields
+- Implement caching (Redis) for frequently accessed data
+- Add request rate limiting
+- Connection pooling optimization
 
-- **Framework:** Express.js
+### Developer Experience
 
-- **Database:** MongoDB (via Mongoose ODM)4. **Pagination**
+- Add database seeding scripts for local development
+- Add Docker and docker-compose for easy setup
+- Add pre-commit hooks (husky) for linting and formatting
+- Add CI/CD pipeline (GitHub Actions)
+- Add ESLint and Prettier configuration
 
-- **Documentation:** Swagger UI with OpenAPI 3.0   - GET endpoints return all records without pagination
+### Additional Features
 
-- **Environment:** dotenv for configuration   - **Would add:** Cursor-based or offset pagination with metadata
+- Quiz attempts/submissions tracking
+- Question randomization
+- Time limits for quizzes
+- Question categories/tags
+- Question difficulty levels
+- Analytics and reporting dashboard
+- Quiz versioning
 
+### Code Quality
 
-
-## Project Structure5. **Error Handling**
-
-   - Basic error handling exists but could be more granular
-
-```   - **Would add:** Custom error classes, detailed error codes, better logging
-
-src/
-
-├── config/### What I Would Improve With More Time
-
-│   ├── database.ts      # MongoDB connection setup
-
-│   └── swagger.ts       # OpenAPI/Swagger configuration1. **Data Validation & Constraints**
-
-├── controllers/   - Add mongoose validators for better data integrity
-
-│   ├── quiz-controller.ts   - Validate quiz IDs exist when creating/updating questions
-
-│   └── question-controller.ts   - Add unique constraints where appropriate
-
-├── models/
-
-│   ├── quiz-model.ts2. **API Enhancements**
-
-│   └── question-model.ts   - Add filtering, sorting, and search capabilities
-
-├── routes/   - Implement sparse fieldsets (JSON:API feature)
-
-│   ├── quiz-routes.ts   - Add bulk operations (create/update multiple resources)
-
-│   └── question-routes.ts   - Add question ordering within quizzes
-
-└── index.ts             # Application entry point
-
-```3. **Documentation**
-
-   - Add more detailed OpenAPI examples and descriptions
-
-## Notes   - Create a Postman collection
-
-   - Add API versioning strategy
-
-- All responses follow the JSON:API specification
-
-- MongoDB Atlas is used for cloud database hosting4. **Performance**
-
-- Questions can belong to multiple quizzes (many-to-many relationship)   - Add database indexing for commonly queried fields
-
-- When a quiz is deleted, the quiz ID is removed from associated questions   - Implement caching (Redis) for frequently accessed data
-
-- Environment variables are used to keep sensitive information secure   - Add request rate limiting
-
-
-5. **Developer Experience**
-   - Add database seeding scripts for local development
-   - Add Docker support for easy setup
-   - Add pre-commit hooks (husky) for linting and formatting
-   - Add CI/CD pipeline
-
-6. **Additional Features**
-   - Quiz attempts/submissions tracking
-   - Question randomization
-   - Time limits for quizzes
-   - Question categories/tags
-   - Question difficulty levels
-   - Analytics and reporting
-
-7. **Code Quality**
-   - Add comprehensive logging (Winston or Pino)
-   - Add monitoring and health check endpoints
-   - Implement repository pattern for better separation of concerns
-   - Add request/response DTOs for better type safety
+- Add comprehensive logging (Winston or Pino)
+- Add monitoring and health check endpoints
+- Implement repository pattern for better separation of concerns
+- Add request/response DTOs for better type safety
+- Add API documentation with more examples
 
 ## Tech Stack
 
@@ -540,11 +294,3 @@ src/
 │   └── question-routes.ts
 └── index.ts             # Application entry point
 ```
-
-## Notes
-
-- All responses follow the JSON:API specification
-- MongoDB Atlas is used for cloud database hosting
-- Questions can belong to multiple quizzes (many-to-many relationship)
-- When a quiz is deleted, the quiz ID is removed from associated questions
-- Environment variables are used to keep sensitive information secure
