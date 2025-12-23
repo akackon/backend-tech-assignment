@@ -46,11 +46,14 @@ const options: swaggerJsdoc.Options = {
           type: "object",
           required: ["text", "type"],
           properties: {
-            quizId: {
-              type: "string",
+            quizIds: {
+              type: "array",
+              items: {
+                type: "string",
+              },
               description:
-                "The ID of the quiz this question belongs to (optional)",
-              example: "507f1f77bcf86cd799439011",
+                "Array of quiz IDs this question belongs to (optional)",
+              example: ["507f1f77bcf86cd799439011", "507f1f77bcf86cd799439012"],
             },
             text: {
               type: "string",
@@ -249,6 +252,16 @@ const options: swaggerJsdoc.Options = {
               },
               description: "The quiz ID",
             },
+            {
+              name: "include",
+              in: "query",
+              required: false,
+              schema: {
+                type: "string",
+                enum: ["questions"],
+              },
+              description: "Include related resources (use 'questions' to include quiz questions)",
+            },
           ],
           responses: {
             "200": {
@@ -357,6 +370,55 @@ const options: swaggerJsdoc.Options = {
           responses: {
             "204": {
               description: "Quiz deleted successfully",
+            },
+            "404": {
+              description: "Quiz not found",
+              content: {
+                "application/json": {
+                  schema: {
+                    $ref: "#/components/schemas/JSONAPIError",
+                  },
+                },
+              },
+            },
+            "500": {
+              description: "Internal server error",
+              content: {
+                "application/json": {
+                  schema: {
+                    $ref: "#/components/schemas/JSONAPIError",
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+      "/quizzes/{id}/questions": {
+        get: {
+          summary: "Get all questions for a specific quiz",
+          tags: ["Quizzes", "Questions"],
+          parameters: [
+            {
+              name: "id",
+              in: "path",
+              required: true,
+              schema: {
+                type: "string",
+              },
+              description: "The quiz ID",
+            },
+          ],
+          responses: {
+            "200": {
+              description: "List of questions for the quiz",
+              content: {
+                "application/json": {
+                  schema: {
+                    $ref: "#/components/schemas/JSONAPICollection",
+                  },
+                },
+              },
             },
             "404": {
               description: "Quiz not found",
