@@ -33,4 +33,4 @@ router.delete("/quizzes/:id", (_req, res) => {
   controller.deleteQuiz(_req, res);
 });
 
-export {router as quizRoutes};
+export { router as quizRoutes };

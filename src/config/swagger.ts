@@ -260,7 +260,8 @@ const options: swaggerJsdoc.Options = {
                 type: "string",
                 enum: ["questions"],
               },
-              description: "Include related resources (use 'questions' to include quiz questions)",
+              description:
+                "Include related resources (use 'questions' to include quiz questions)",
             },
           ],
           responses: {

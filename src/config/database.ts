@@ -4,7 +4,8 @@ import dotenv from "dotenv";
 // Load environment variables
 dotenv.config();
 
-const MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost:27017/quiz-api";
+const MONGODB_URI =
+  process.env.MONGODB_URI || "mongodb://localhost:27017/quiz-api";
 
 export const connectDatabase = async (): Promise<void> => {
   try {
