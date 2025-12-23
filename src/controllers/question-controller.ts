@@ -5,7 +5,7 @@ import { QuestionModel } from "../models/question-model.js";
 export class QuestionController {
   public async createQuestion(req: Request, res: Response) {
     try {
-      const { quizId, text, type, choices, correctAnswer } = req.body;
+      const { quizIds, text, type, choices, correctAnswer } = req.body;
 
       if (!text || !type) {
         return res.status(StatusCodes.BAD_REQUEST).json({
@@ -44,7 +44,7 @@ export class QuestionController {
       }
 
       const question = await QuestionModel.create({
-        quizId,
+        quizIds: quizIds || [],
         text,
         type,
         choices,
@@ -56,7 +56,7 @@ export class QuestionController {
           type: "questions",
           id: question._id.toString(),
           attributes: {
-            quizId: question.quizId?.toString(),
+            quizIds: question.quizIds.map((id) => id.toString()),
             text: question.text,
             questionType: question.type,
             choices: question.choices,
@@ -101,7 +101,7 @@ export class QuestionController {
           type: "questions",
           id: question._id.toString(),
           attributes: {
-            quizId: question.quizId?.toString(),
+            quizIds: question.quizIds.map((id) => id.toString()),
             text: question.text,
             questionType: question.type,
             choices: question.choices,
@@ -129,7 +129,7 @@ export class QuestionController {
     try {
       const { quizId } = req.query;
 
-      const filter = quizId ? { quizId } : {};
+      const filter = quizId ? { quizIds: quizId } : {};
       const questions = await QuestionModel.find(filter);
 
       res.status(StatusCodes.OK).json({
@@ -137,7 +137,7 @@ export class QuestionController {
           type: "questions",
           id: question._id.toString(),
           attributes: {
-            quizId: question.quizId?.toString(),
+            quizIds: question.quizIds.map((id) => id.toString()),
             text: question.text,
             questionType: question.type,
             choices: question.choices,
@@ -163,11 +163,11 @@ export class QuestionController {
 
   public async updateQuestion(req: Request, res: Response) {
     try {
-      const { quizId, text, type, choices, correctAnswer } = req.body;
+      const { quizIds, text, type, choices, correctAnswer } = req.body;
 
       const question = await QuestionModel.findByIdAndUpdate(
         req.params.id,
-        { quizId, text, type, choices, correctAnswer },
+        { quizIds, text, type, choices, correctAnswer },
         { new: true, runValidators: true }
       );
 
@@ -188,7 +188,7 @@ export class QuestionController {
           type: "questions",
           id: question._id.toString(),
           attributes: {
-            quizId: question.quizId?.toString(),
+            quizIds: question.quizIds.map((id) => id.toString()),
             text: question.text,
             questionType: question.type,
             choices: question.choices,

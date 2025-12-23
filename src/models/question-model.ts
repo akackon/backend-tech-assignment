@@ -8,7 +8,7 @@ export interface IChoice {
 }
 
 export interface IQuestion extends Document {
-  quizId?: mongoose.Types.ObjectId;
+  quizIds: mongoose.Types.ObjectId[];
   text: string;
   type: QuestionType;
   choices?: IChoice[];
@@ -35,10 +35,10 @@ const choiceSchema = new Schema<IChoice>(
 
 const questionSchema = new Schema<IQuestion>(
   {
-    quizId: {
-      type: Schema.Types.ObjectId,
+    quizIds: {
+      type: [Schema.Types.ObjectId],
       ref: "Quiz",
-      required: false,
+      default: [],
     },
     text: {
       type: String,
