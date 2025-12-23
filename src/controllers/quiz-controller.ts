@@ -1,6 +1,7 @@
 import type { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import { QuizModel } from "../models/quiz-model.js";
+import { QuestionModel } from "../models/question-model.js";
 
 export class QuizController {
   public async createQuiz(req: Request, res: Response) {
@@ -54,6 +55,7 @@ export class QuizController {
 
   public async getQuizById(req: Request, res: Response) {
     try {
+      const { include } = req.query;
       const quiz = await QuizModel.findById(req.params.id);
 
       if (!quiz) {
@@ -68,7 +70,7 @@ export class QuizController {
         });
       }
 
-      res.status(StatusCodes.OK).json({
+      const response: any = {
         data: {
           type: "quizzes",
           id: quiz._id.toString(),
@@ -80,7 +82,26 @@ export class QuizController {
             updatedAt: quiz.updatedAt,
           },
         },
-      });
+      };
+
+      // Include questions if requested
+      if (include === "questions") {
+        const questions = await QuestionModel.find({ quizIds: quiz._id });
+        response.included = questions.map((question) => ({
+          type: "questions",
+          id: question._id.toString(),
+          attributes: {
+            text: question.text,
+            questionType: question.type,
+            choices: question.choices,
+            correctAnswer: question.correctAnswer,
+            createdAt: question.createdAt,
+            updatedAt: question.updatedAt,
+          },
+        }));
+      }
+
+      res.status(StatusCodes.OK).json(response);
     } catch (error) {
       console.error("getQuizById error:", error);
       res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
@@ -191,6 +212,12 @@ export class QuizController {
         });
       }
 
+      // Remove this quiz ID from all questions that reference it
+      await QuestionModel.updateMany(
+        { quizIds: req.params.id },
+        { $pull: { quizIds: req.params.id } }
+      );
+
       res.status(StatusCodes.NO_CONTENT).send();
     } catch (error) {
       console.error("deleteQuiz error:", error);
@@ -200,6 +227,55 @@ export class QuizController {
             status: StatusCodes.INTERNAL_SERVER_ERROR.toString(),
             title: "Internal Server Error",
             detail: "An error occurred while deleting the quiz",
+          },
+        ],
+      });
+    }
+  }
+
+  public async getQuizQuestions(req: Request, res: Response) {
+    try {
+      // First verify the quiz exists
+      const quiz = await QuizModel.findById(req.params.id);
+
+      if (!quiz) {
+        return res.status(StatusCodes.NOT_FOUND).json({
+          errors: [
+            {
+              status: StatusCodes.NOT_FOUND.toString(),
+              title: "Not Found",
+              detail: `Quiz with id ${req.params.id} not found`,
+            },
+          ],
+        });
+      }
+
+      // Get all questions for this quiz
+      const questions = await QuestionModel.find({ quizIds: req.params.id });
+
+      res.status(StatusCodes.OK).json({
+        data: questions.map((question) => ({
+          type: "questions",
+          id: question._id.toString(),
+          attributes: {
+            quizIds: question.quizIds.map((id) => id.toString()),
+            text: question.text,
+            questionType: question.type,
+            choices: question.choices,
+            correctAnswer: question.correctAnswer,
+            createdAt: question.createdAt,
+            updatedAt: question.updatedAt,
+          },
+        })),
+      });
+    } catch (error) {
+      console.error("getQuizQuestions error:", error);
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        errors: [
+          {
+            status: StatusCodes.INTERNAL_SERVER_ERROR.toString(),
+            title: "Internal Server Error",
+            detail: "An error occurred while fetching quiz questions",
           },
         ],
       });

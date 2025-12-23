@@ -13,6 +13,11 @@ router.get("/quizzes/:id", (_req, res) => {
   controller.getQuizById(_req, res);
 });
 
+router.get("/quizzes/:id/questions", (_req, res) => {
+  const controller = new QuizController();
+  controller.getQuizQuestions(_req, res);
+});
+
 router.get("/quizzes", (_req, res) => {
   const controller = new QuizController();
   controller.getQuizzes(_req, res);
