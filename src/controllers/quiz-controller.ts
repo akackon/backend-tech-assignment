@@ -1,29 +1,208 @@
 import type { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
+import { QuizModel } from "../models/quiz-model.js";
 
 export class QuizController {
-  public createQuiz(req: Request, res: Response) {
-    console.log("createQuiz", req.body);
-    res.sendStatus(StatusCodes.INTERNAL_SERVER_ERROR);
+  public async createQuiz(req: Request, res: Response) {
+    try {
+      const { title, description, instructions } = req.body;
+
+      if (!title || !description || !instructions) {
+        return res.status(StatusCodes.BAD_REQUEST).json({
+          errors: [
+            {
+              status: StatusCodes.BAD_REQUEST.toString(),
+              title: "Validation Error",
+              detail: "title, description, and instructions are required",
+            },
+          ],
+        });
+      }
+
+      const quiz = await QuizModel.create({
+        title,
+        description,
+        instructions,
+      });
+
+      res.status(StatusCodes.CREATED).json({
+        data: {
+          type: "quizzes",
+          id: quiz._id.toString(),
+          attributes: {
+            title: quiz.title,
+            description: quiz.description,
+            instructions: quiz.instructions,
+            createdAt: quiz.createdAt,
+            updatedAt: quiz.updatedAt,
+          },
+        },
+      });
+    } catch (error) {
+      console.error("createQuiz error:", error);
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        errors: [
+          {
+            status: StatusCodes.INTERNAL_SERVER_ERROR.toString(),
+            title: "Internal Server Error",
+            detail: "An error occurred while creating the quiz",
+          },
+        ],
+      });
+    }
   }
 
-  public getQuizById(req: Request, res: Response) {
-    console.log("getQuizById", req.params.id);
-    res.sendStatus(StatusCodes.INTERNAL_SERVER_ERROR);
+  public async getQuizById(req: Request, res: Response) {
+    try {
+      const quiz = await QuizModel.findById(req.params.id);
+
+      if (!quiz) {
+        return res.status(StatusCodes.NOT_FOUND).json({
+          errors: [
+            {
+              status: StatusCodes.NOT_FOUND.toString(),
+              title: "Not Found",
+              detail: `Quiz with id ${req.params.id} not found`,
+            },
+          ],
+        });
+      }
+
+      res.status(StatusCodes.OK).json({
+        data: {
+          type: "quizzes",
+          id: quiz._id.toString(),
+          attributes: {
+            title: quiz.title,
+            description: quiz.description,
+            instructions: quiz.instructions,
+            createdAt: quiz.createdAt,
+            updatedAt: quiz.updatedAt,
+          },
+        },
+      });
+    } catch (error) {
+      console.error("getQuizById error:", error);
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        errors: [
+          {
+            status: StatusCodes.INTERNAL_SERVER_ERROR.toString(),
+            title: "Internal Server Error",
+            detail: "An error occurred while fetching the quiz",
+          },
+        ],
+      });
+    }
   }
 
-  public getQuizzes(req: Request, res: Response) {
-      console.log("getQuizzes");
-    res.sendStatus(StatusCodes.INTERNAL_SERVER_ERROR);
+  public async getQuizzes(req: Request, res: Response) {
+    try {
+      const quizzes = await QuizModel.find();
+
+      res.status(StatusCodes.OK).json({
+        data: quizzes.map((quiz) => ({
+          type: "quizzes",
+          id: quiz._id.toString(),
+          attributes: {
+            title: quiz.title,
+            description: quiz.description,
+            instructions: quiz.instructions,
+            createdAt: quiz.createdAt,
+            updatedAt: quiz.updatedAt,
+          },
+        })),
+      });
+    } catch (error) {
+      console.error("getQuizzes error:", error);
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        errors: [
+          {
+            status: StatusCodes.INTERNAL_SERVER_ERROR.toString(),
+            title: "Internal Server Error",
+            detail: "An error occurred while fetching quizzes",
+          },
+        ],
+      });
+    }
   }
 
-  public updateQuiz(req: Request, res: Response) {
-    console.log("updateQuiz", req.params.id);
-    res.sendStatus(StatusCodes.INTERNAL_SERVER_ERROR);
+  public async updateQuiz(req: Request, res: Response) {
+    try {
+      const { title, description, instructions } = req.body;
+
+      const quiz = await QuizModel.findByIdAndUpdate(
+        req.params.id,
+        { title, description, instructions },
+        { new: true, runValidators: true }
+      );
+
+      if (!quiz) {
+        return res.status(StatusCodes.NOT_FOUND).json({
+          errors: [
+            {
+              status: StatusCodes.NOT_FOUND.toString(),
+              title: "Not Found",
+              detail: `Quiz with id ${req.params.id} not found`,
+            },
+          ],
+        });
+      }
+
+      res.status(StatusCodes.OK).json({
+        data: {
+          type: "quizzes",
+          id: quiz._id.toString(),
+          attributes: {
+            title: quiz.title,
+            description: quiz.description,
+            instructions: quiz.instructions,
+            createdAt: quiz.createdAt,
+            updatedAt: quiz.updatedAt,
+          },
+        },
+      });
+    } catch (error) {
+      console.error("updateQuiz error:", error);
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        errors: [
+          {
+            status: StatusCodes.INTERNAL_SERVER_ERROR.toString(),
+            title: "Internal Server Error",
+            detail: "An error occurred while updating the quiz",
+          },
+        ],
+      });
+    }
   }
 
-  public deleteQuiz(req: Request, res: Response) {
-    console.log("deleteQuiz", req.params.id);
-    res.sendStatus(StatusCodes.INTERNAL_SERVER_ERROR);
+  public async deleteQuiz(req: Request, res: Response) {
+    try {
+      const quiz = await QuizModel.findByIdAndDelete(req.params.id);
+
+      if (!quiz) {
+        return res.status(StatusCodes.NOT_FOUND).json({
+          errors: [
+            {
+              status: StatusCodes.NOT_FOUND.toString(),
+              title: "Not Found",
+              detail: `Quiz with id ${req.params.id} not found`,
+            },
+          ],
+        });
+      }
+
+      res.status(StatusCodes.NO_CONTENT).send();
+    } catch (error) {
+      console.error("deleteQuiz error:", error);
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        errors: [
+          {
+            status: StatusCodes.INTERNAL_SERVER_ERROR.toString(),
+            title: "Internal Server Error",
+            detail: "An error occurred while deleting the quiz",
+          },
+        ],
+      });
+    }
   }
 }
