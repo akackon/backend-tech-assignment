@@ -317,7 +317,7 @@ curl -X POST http://localhost:3000/questions \
 
 ## Time Spent
 
-**Total: ~4 hours**
+**Total: ~5 hours**
 
 - Project setup and MongoDB integration: 45 minutes
 - CRUD operations implementation: 60 minutes
@@ -327,6 +327,7 @@ curl -X POST http://localhost:3000/questions \
 - Environment variables and MongoDB Atlas setup: 15 minutes
 - Docker Compose setup with full containerization: 30 minutes
 - Documentation updates (README and Docker guide): 15 minutes
+- Jest testing setup and comprehensive integration tests: 45 minutes
 
 ## Trade-offs Made
 
@@ -340,9 +341,15 @@ Due to the 3-hour time constraint, the following trade-offs were made:
 
    - Would add: joi or zod for schema validation, detailed error messages
 
-3. **Testing** - No unit or integration tests implemented.
+3. **Testing** - ~~No unit or integration tests implemented~~ ✅ **Comprehensive integration tests implemented**
 
-   - Would add: Jest for unit tests, Supertest for API integration tests
+   - Implemented: Complete integration test suite with Jest and Supertest covering:
+     - Quiz and Question CRUD operations
+     - Many-to-many relationships between quizzes and questions
+     - JSON:API compliance verification
+     - Cascade deletion behavior
+     - Edge cases (2 quizzes, 5 questions each, 5 shared questions)
+   - Would add: More granular unit tests for controllers and models, edge case testing, error scenario testing
 
 4. **Pagination** - GET endpoints return all records without pagination.
 
