@@ -24,6 +24,20 @@ services:
       timeout: 5s
       retries: 5
 
+  test:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: quiz-api-test
+    environment:
+      TEST_MONGODB_URI: mongodb://${MONGO_APP_USER:-quiz_user}:${MONGO_APP_PASSWORD:-quiz_password}@mongodb:27017/quiz-api-test?authSource=${MONGO_DATABASE:-quiz-api}
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    networks:
+      - quiz-api-network
+    command: npm test
+
   app:
     build:
       context: .
@@ -39,6 +53,8 @@ services:
     depends_on:
       mongodb:
         condition: service_healthy
+      test:
+        condition: service_completed_successfully
     networks:
       - quiz-api-network
 
