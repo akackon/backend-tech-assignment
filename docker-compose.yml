@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   mongodb:
@@ -6,14 +6,39 @@ services:
     container_name: quiz-api-mongodb
     restart: unless-stopped
     environment:
-      MONGO_INITDB_ROOT_USERNAME: admin
-      MONGO_INITDB_ROOT_PASSWORD: adminpassword
-      MONGO_INITDB_DATABASE: quiz-api
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USER:-admin}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD:-adminpassword}
+      MONGO_INITDB_DATABASE: ${MONGO_DATABASE:-quiz-api}
+      MONGO_APP_USER: ${MONGO_APP_USER:-quiz_user}
+      MONGO_APP_PASSWORD: ${MONGO_APP_PASSWORD:-quiz_password}
     ports:
       - "27017:27017"
     volumes:
       - mongodb_data:/data/db
       - ./mongo-init:/docker-entrypoint-initdb.d
+    networks:
+      - quiz-api-network
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: quiz-api-app
+    restart: unless-stopped
+    environment:
+      MONGODB_URI: mongodb://${MONGO_APP_USER:-quiz_user}:${MONGO_APP_PASSWORD:-quiz_password}@mongodb:27017/${MONGO_DATABASE:-quiz-api}?authSource=${MONGO_DATABASE:-quiz-api}
+      PORT: 3000
+      NODE_ENV: production
+    ports:
+      - "3001:3000"
+    depends_on:
+      mongodb:
+        condition: service_healthy
     networks:
       - quiz-api-network
 
