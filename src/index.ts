@@ -21,7 +21,7 @@ appServer.use(questionRoutes);
 appServer.use(quizRoutes);
 
 // Connect to database then start server (only if not in test mode)
-if (process.env.NODE_ENV !== 'test') {
+if (process.env.NODE_ENV !== "test") {
   connectDatabase().then(() => {
     appServer.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);
