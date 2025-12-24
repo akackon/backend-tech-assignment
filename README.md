@@ -95,13 +95,14 @@ This is the easiest way to get started - it includes both MongoDB and the Expres
 1. **Start all services with Docker Compose**
 
    ```bash
-   docker-compose up -d
+   docker-compose up -d && docker-compose logs test
    ```
 
-   This will start:
+   This will:
 
-   - MongoDB container on port 27017
-   - Express API container on port 3001
+   - Start MongoDB container on port 27017
+   - Run the test suite against MongoDB (shown in logs)
+   - Start Express API container on port 3000 (only after tests pass)
 
 2. **Access the API**
 
@@ -344,17 +345,17 @@ curl -X POST http://localhost:3000/quiz-attempts/<attempt-id>/complete
 
 ## Time Spent
 
-**Total: ~5 hours**
+**Total: ~3 hours**
 
-- Project setup and MongoDB integration: 45 minutes
-- CRUD operations implementation: 60 minutes
-- JSON:API compliance and error handling: 30 minutes
-- Swagger/OpenAPI documentation: 30 minutes
-- Relationship endpoints and many-to-many support: 30 minutes
-- Environment variables and MongoDB Atlas setup: 15 minutes
-- Docker Compose setup with full containerization: 30 minutes
-- Documentation updates (README and Docker guide): 15 minutes
-- Jest testing setup and comprehensive integration tests: 45 minutes
+- Project setup and MongoDB integration: 30 minutes
+- CRUD operations implementation: 45 minutes
+- JSON:API compliance and error handling: 20 minutes
+- Swagger/OpenAPI documentation: 20 minutes
+- Relationship endpoints and many-to-many support: 20 minutes
+- Environment variables and MongoDB Atlas setup: 10 minutes
+- Docker Compose setup with full containerization: 20 minutes
+- Documentation updates (README and Docker guide): 10 minutes
+- Jest testing setup and comprehensive integration tests: 25 minutes
 
 ## Trade-offs Made
 
