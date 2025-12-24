@@ -86,6 +86,8 @@ npm run debug
 - Node.js (v18 or higher)
 - npm
 - **Option A:** Docker and Docker Compose (recommended for local development)
+  - Verify installation: `docker --version` and `docker-compose --version`
+  - [Install Docker Desktop](https://www.docker.com/products/docker-desktop/) if not installed
 - **Option B:** MongoDB Atlas account
 
 ### Option A: Setup with Docker (Recommended)
@@ -102,12 +104,12 @@ This is the easiest way to get started - it includes both MongoDB and the Expres
 
    - Start MongoDB container on port 27017
    - Run the test suite against MongoDB (shown in logs)
-   - Start Express API container on port 3000 (only after tests pass)
+   - Start Express API container on port 3001 (only after tests pass)
 
 2. **Access the API**
 
-   - API Server: <http://localhost:3000>
-   - Swagger UI Documentation: <http://localhost:3000/api-docs>
+   - API Server: <http://localhost:3001>
+   - Swagger UI Documentation: <http://localhost:3001/api-docs>
 
 3. **View logs** (optional)
 
