@@ -77,6 +77,7 @@ npm run debug
 - Relationship endpoints for fetching quiz questions
 - Environment variable configuration for security
 - Cascade cleanup when quizzes are deleted
+- **Quiz play functionality** - Start a quiz, answer questions, get scored
 
 ## Instructions to Run
 
@@ -285,6 +286,14 @@ docker-compose up -d --build app
 - `PATCH /questions/:id` - Update a question
 - `DELETE /questions/:id` - Delete a question
 
+**Quiz Attempts (Play a Quiz):**
+
+- `POST /quizzes/:quizId/play` - Start a quiz attempt (returns questions to answer)
+- `POST /quiz-attempts/:attemptId/answers` - Submit an answer for a question
+- `POST /quiz-attempts/:attemptId/complete` - Complete the quiz and get final score
+- `GET /quiz-attempts/:attemptId` - Get attempt details with all answers
+- `GET /quizzes/:quizId/attempts` - Get all completed attempts for a quiz
+
 ### Example Usage
 
 Create a quiz:
@@ -313,6 +322,24 @@ curl -X POST http://localhost:3000/questions \
       {"text": "A loop construct", "isCorrect": false}
     ]
   }'
+```
+
+Play a quiz:
+
+```bash
+# 1. Start a quiz attempt
+curl -X POST http://localhost:3000/quizzes/<quiz-id>/play
+
+# 2. Submit an answer
+curl -X POST http://localhost:3000/quiz-attempts/<attempt-id>/answers \
+  -H "Content-Type: application/json" \
+  -d '{
+    "questionId": "<question-id>",
+    "answer": "A function with access to outer scope"
+  }'
+
+# 3. Complete the quiz and get your score
+curl -X POST http://localhost:3000/quiz-attempts/<attempt-id>/complete
 ```
 
 ## Time Spent
@@ -418,19 +445,25 @@ Due to the 3-hour time constraint, the following trade-offs were made:
 
 ## Project Structure
 
-```
+```text
 src/
 ├── config/
-│   ├── database.ts      # MongoDB connection setup
-│   └── swagger.ts       # OpenAPI/Swagger configuration
+│   ├── database.ts          # MongoDB connection setup
+│   └── swagger.ts           # OpenAPI/Swagger configuration
 ├── controllers/
 │   ├── quiz-controller.ts
-│   └── question-controller.ts
+│   ├── question-controller.ts
+│   └── quiz-attempt-controller.ts
 ├── models/
 │   ├── quiz-model.ts
-│   └── question-model.ts
+│   ├── question-model.ts
+│   └── quiz-attempt-model.ts
 ├── routes/
 │   ├── quiz-routes.ts
-│   └── question-routes.ts
-└── index.ts             # Application entry point
+│   ├── question-routes.ts
+│   └── quiz-attempt-routes.ts
+├── __tests__/
+│   ├── api.test.ts          # Integration tests
+│   └── setup.ts             # Test database setup
+└── index.ts                 # Application entry point
 ```
