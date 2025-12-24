@@ -89,62 +89,133 @@ npm run debug
 
 ### Option A: Setup with Docker (Recommended)
 
-This is the easiest way to get started as it includes a local MongoDB instance.
+This is the easiest way to get started - it includes both MongoDB and the Express app in containers.
 
-1. **Start MongoDB with Docker Compose**
+1. **Start all services with Docker Compose**
 
    ```bash
    docker-compose up -d
    ```
 
-   This will start a MongoDB container on port 27017.
+   This will start:
 
-2. **Install dependencies**
+   - MongoDB container on port 27017
+   - Express API container on port 3001
 
-   ```bash
-   npm install
-   ```
+2. **Access the API**
 
-3. **Configure environment variables for local Docker**
-
-   Create a `.env` file:
-
-   ```bash
-   cp .env.local.example .env
-   ```
-
-   The default `.env.local.example` is already configured for Docker:
-   ```env
-   MONGODB_URI=mongodb://quiz_user:quiz_password@localhost:27017/quiz-api?authSource=quiz-api
-   PORT=3000
-   ```
-
-4. **Build and start the application**
-
-   ```bash
-   npm run build
-   npm run start
-   ```
-
-   Or for development mode:
-   ```bash
-   npm run debug
-   ```
-
-5. **Access the API**
    - API Server: <http://localhost:3000>
    - Swagger UI Documentation: <http://localhost:3000/api-docs>
 
-6. **Stop the MongoDB container** (when finished)
+3. **View logs** (optional)
+
+   ```bash
+   # All services
+   docker-compose logs -f
+
+   # Just the app
+   docker-compose logs -f app
+
+   # Just MongoDB
+   docker-compose logs -f mongodb
+   ```
+
+4. **Stop all services** (when finished)
 
    ```bash
    docker-compose down
    ```
 
    To stop and remove all data:
+
    ```bash
    docker-compose down -v
    ```
+
+#### Customizing Docker Credentials
+
+You can customize the MongoDB credentials by creating a `.env` file:
+
+1. Copy the example file:
+
+   ```bash
+   cp .env.docker.example .env
+   ```
+
+2. Edit `.env` and change the values:
+
+   ```env
+   MONGO_ROOT_USER=your_admin_user
+   MONGO_ROOT_PASSWORD=your_admin_password
+   MONGO_DATABASE=your_database_name
+   MONGO_APP_USER=your_app_user
+   MONGO_APP_PASSWORD=your_app_password
+   ```
+
+3. Restart the services:
+
+   ```bash
+   docker-compose down -v  # Remove old data
+   docker-compose up -d
+   ```
+
+**Default credentials** (if no `.env` file is provided):
+
+- Admin user: `admin` / `adminpassword`
+- App user: `quiz_user` / `quiz_password`
+- Database: `quiz-api`
+
+#### Using MongoDB Compass
+
+You can use [MongoDB Compass](https://www.mongodb.com/products/compass) to visually explore and manage the database:
+
+1. **Download and install MongoDB Compass** (if you haven't already)
+
+2. **Connect to the Docker MongoDB instance**
+
+   Use this connection string:
+
+   ```
+   mongodb://quiz_user:quiz_password@localhost:27017/quiz-api?authSource=quiz-api
+   ```
+
+   Or if you customized credentials in your `.env` file:
+
+   ```
+   mongodb://<MONGO_APP_USER>:<MONGO_APP_PASSWORD>@localhost:27017/<MONGO_DATABASE>?authSource=<MONGO_DATABASE>
+   ```
+
+3. **Browse collections**
+
+   Once connected, you can:
+
+   - View all quizzes and questions
+   - Execute queries and aggregations
+   - Analyze indexes and performance
+   - Export/import data
+
+#### Docker Troubleshooting
+
+**App fails to connect to MongoDB:**
+
+- Check MongoDB is healthy: `docker-compose ps`
+- Check logs: `docker-compose logs mongodb`
+- Ensure MongoDB has finished initializing
+
+**Port already in use:**
+
+- Change the port mapping in `docker-compose.yml`:
+
+  ```yaml
+  ports:
+    - "3001:3000" # Use port 3001 on host
+  ```
+
+**Rebuild after code changes:**
+
+```bash
+docker-compose up -d --build app
+```
 
 ### Option B: Setup with MongoDB Atlas
 
@@ -246,7 +317,7 @@ curl -X POST http://localhost:3000/questions \
 
 ## Time Spent
 
-**Total: ~3 hours**
+**Total: ~4 hours**
 
 - Project setup and MongoDB integration: 45 minutes
 - CRUD operations implementation: 60 minutes
@@ -254,6 +325,8 @@ curl -X POST http://localhost:3000/questions \
 - Swagger/OpenAPI documentation: 30 minutes
 - Relationship endpoints and many-to-many support: 30 minutes
 - Environment variables and MongoDB Atlas setup: 15 minutes
+- Docker Compose setup with full containerization: 30 minutes
+- Documentation updates (README and Docker guide): 15 minutes
 
 ## Trade-offs Made
 
@@ -304,7 +377,7 @@ Due to the 3-hour time constraint, the following trade-offs were made:
 ### Developer Experience
 
 - Add database seeding scripts for local development
-- Add Docker and docker-compose for easy setup
+- ~~Add Docker and docker-compose for easy setup~~ ✅ **Implemented**
 - Add pre-commit hooks (husky) for linting and formatting
 - Add CI/CD pipeline (GitHub Actions)
 - Add ESLint and Prettier configuration
