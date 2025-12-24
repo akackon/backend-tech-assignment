@@ -53,7 +53,10 @@ export class QuizAttemptController {
                 attributes: {
                   text: q.text,
                   type: q.type,
-                  choices: q.type === "multiple-choice" ? q.choices?.map(c => c.text) : undefined,
+                  choices:
+                    q.type === "multiple-choice"
+                      ? q.choices?.map((c) => c.text)
+                      : undefined,
                 },
               })),
             },
@@ -80,13 +83,20 @@ export class QuizAttemptController {
       const attempt = await QuizAttemptModel.findById(attemptId);
       if (!attempt) {
         return res.status(StatusCodes.NOT_FOUND).json({
-          errors: [{ title: "Quiz attempt not found", status: StatusCodes.NOT_FOUND }],
+          errors: [
+            { title: "Quiz attempt not found", status: StatusCodes.NOT_FOUND },
+          ],
         });
       }
 
       if (attempt.status !== "in-progress") {
         return res.status(StatusCodes.BAD_REQUEST).json({
-          errors: [{ title: "Quiz attempt is no longer in progress", status: StatusCodes.BAD_REQUEST }],
+          errors: [
+            {
+              title: "Quiz attempt is no longer in progress",
+              status: StatusCodes.BAD_REQUEST,
+            },
+          ],
         });
       }
 
@@ -96,7 +106,12 @@ export class QuizAttemptController {
       );
       if (existingAnswer) {
         return res.status(StatusCodes.BAD_REQUEST).json({
-          errors: [{ title: "Question already answered", status: StatusCodes.BAD_REQUEST }],
+          errors: [
+            {
+              title: "Question already answered",
+              status: StatusCodes.BAD_REQUEST,
+            },
+          ],
         });
       }
 
@@ -104,17 +119,23 @@ export class QuizAttemptController {
       const question = await QuestionModel.findById(questionId);
       if (!question) {
         return res.status(StatusCodes.NOT_FOUND).json({
-          errors: [{ title: "Question not found", status: StatusCodes.NOT_FOUND }],
+          errors: [
+            { title: "Question not found", status: StatusCodes.NOT_FOUND },
+          ],
         });
       }
 
       // Check if the answer is correct
       let isCorrect = false;
       if (question.type === "free-text") {
-        isCorrect = question.correctAnswer?.toLowerCase().trim() === answer.toLowerCase().trim();
+        isCorrect =
+          question.correctAnswer?.toLowerCase().trim() ===
+          answer.toLowerCase().trim();
       } else if (question.type === "multiple-choice") {
         const correctChoice = question.choices?.find((c) => c.isCorrect);
-        isCorrect = correctChoice?.text.toLowerCase().trim() === answer.toLowerCase().trim();
+        isCorrect =
+          correctChoice?.text.toLowerCase().trim() ===
+          answer.toLowerCase().trim();
       }
 
       // Add the answer to the attempt
@@ -163,13 +184,20 @@ export class QuizAttemptController {
       const attempt = await QuizAttemptModel.findById(attemptId);
       if (!attempt) {
         return res.status(StatusCodes.NOT_FOUND).json({
-          errors: [{ title: "Quiz attempt not found", status: StatusCodes.NOT_FOUND }],
+          errors: [
+            { title: "Quiz attempt not found", status: StatusCodes.NOT_FOUND },
+          ],
         });
       }
 
       if (attempt.status !== "in-progress") {
         return res.status(StatusCodes.BAD_REQUEST).json({
-          errors: [{ title: "Quiz attempt is no longer in progress", status: StatusCodes.BAD_REQUEST }],
+          errors: [
+            {
+              title: "Quiz attempt is no longer in progress",
+              status: StatusCodes.BAD_REQUEST,
+            },
+          ],
         });
       }
 
@@ -190,14 +218,19 @@ export class QuizAttemptController {
             score: attempt.score,
             totalAnswers,
             correctAnswers,
-            accuracy: totalAnswers > 0 ? Math.round((correctAnswers / totalAnswers) * 100) : 0,
+            accuracy:
+              totalAnswers > 0
+                ? Math.round((correctAnswers / totalAnswers) * 100)
+                : 0,
             completedAt: attempt.completedAt,
           },
         },
       });
     } catch (error) {
       res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-        errors: [{ title: "Failed to complete quiz attempt", detail: String(error) }],
+        errors: [
+          { title: "Failed to complete quiz attempt", detail: String(error) },
+        ],
       });
     }
   }
@@ -213,7 +246,9 @@ export class QuizAttemptController {
       const attempt = await QuizAttemptModel.findById(attemptId);
       if (!attempt) {
         return res.status(StatusCodes.NOT_FOUND).json({
-          errors: [{ title: "Quiz attempt not found", status: StatusCodes.NOT_FOUND }],
+          errors: [
+            { title: "Quiz attempt not found", status: StatusCodes.NOT_FOUND },
+          ],
         });
       }
 
@@ -233,7 +268,9 @@ export class QuizAttemptController {
       });
     } catch (error) {
       res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-        errors: [{ title: "Failed to get quiz attempt", detail: String(error) }],
+        errors: [
+          { title: "Failed to get quiz attempt", detail: String(error) },
+        ],
       });
     }
   }
@@ -246,7 +283,10 @@ export class QuizAttemptController {
     try {
       const { quizId } = req.params;
 
-      const attempts = await QuizAttemptModel.find({ quizId, status: "completed" })
+      const attempts = await QuizAttemptModel.find({
+        quizId,
+        status: "completed",
+      })
         .sort({ score: -1 })
         .limit(10);
 
@@ -262,7 +302,9 @@ export class QuizAttemptController {
       });
     } catch (error) {
       res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-        errors: [{ title: "Failed to get quiz attempts", detail: String(error) }],
+        errors: [
+          { title: "Failed to get quiz attempts", detail: String(error) },
+        ],
       });
     }
   }
