@@ -87,6 +87,14 @@ export class QuizController {
       // Include questions if requested
       if (include === "questions") {
         const questions = await QuestionModel.find({ quizIds: quiz._id });
+        response.data.relationships = {
+          questions: {
+            data: questions.map((q) => ({
+              type: "questions",
+              id: q._id.toString(),
+            })),
+          },
+        };
         response.included = questions.map((question) => ({
           type: "questions",
           id: question._id.toString(),
