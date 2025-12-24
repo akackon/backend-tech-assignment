@@ -3,6 +3,7 @@ import swaggerUi from "swagger-ui-express";
 import dotenv from "dotenv";
 import { questionRoutes } from "./routes/question-routes.js";
 import { quizRoutes } from "./routes/quiz-routes.js";
+import { quizAttemptRoutes } from "./routes/quiz-attempt-routes.js";
 import { connectDatabase } from "./config/database.js";
 import { swaggerSpec } from "./config/swagger.js";
 
@@ -19,6 +20,7 @@ appServer.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 appServer.use(questionRoutes);
 appServer.use(quizRoutes);
+appServer.use(quizAttemptRoutes);
 
 // Connect to database then start server (only if not in test mode)
 if (process.env.NODE_ENV !== "test") {
