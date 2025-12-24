@@ -84,9 +84,69 @@ npm run debug
 
 - Node.js (v18 or higher)
 - npm
-- MongoDB Atlas account (or local MongoDB instance)
+- **Option A:** Docker and Docker Compose (recommended for local development)
+- **Option B:** MongoDB Atlas account
 
-### Setup Steps
+### Option A: Setup with Docker (Recommended)
+
+This is the easiest way to get started as it includes a local MongoDB instance.
+
+1. **Start MongoDB with Docker Compose**
+
+   ```bash
+   docker-compose up -d
+   ```
+
+   This will start a MongoDB container on port 27017.
+
+2. **Install dependencies**
+
+   ```bash
+   npm install
+   ```
+
+3. **Configure environment variables for local Docker**
+
+   Create a `.env` file:
+
+   ```bash
+   cp .env.local.example .env
+   ```
+
+   The default `.env.local.example` is already configured for Docker:
+   ```env
+   MONGODB_URI=mongodb://quiz_user:quiz_password@localhost:27017/quiz-api?authSource=quiz-api
+   PORT=3000
+   ```
+
+4. **Build and start the application**
+
+   ```bash
+   npm run build
+   npm run start
+   ```
+
+   Or for development mode:
+   ```bash
+   npm run debug
+   ```
+
+5. **Access the API**
+   - API Server: <http://localhost:3000>
+   - Swagger UI Documentation: <http://localhost:3000/api-docs>
+
+6. **Stop the MongoDB container** (when finished)
+
+   ```bash
+   docker-compose down
+   ```
+
+   To stop and remove all data:
+   ```bash
+   docker-compose down -v
+   ```
+
+### Option B: Setup with MongoDB Atlas
 
 1. **Install dependencies**
 
