@@ -265,8 +265,8 @@ docker-compose up -d --build app
    ```
 
 5. **Access the API**
-   - API Server: http://localhost:3000
-   - Swagger UI Documentation: http://localhost:3000/api-docs
+   - API Server: http://localhost:3001
+   - Swagger UI Documentation: http://localhost:3001/api-docs
 
 ### API Endpoints
 
@@ -331,10 +331,10 @@ Play a quiz:
 
 ```bash
 # 1. Start a quiz attempt
-curl -X POST http://localhost:3000/quizzes/<quiz-id>/play
+curl -X POST http://localhost:3001/quizzes/<quiz-id>/play
 
 # 2. Submit an answer
-curl -X POST http://localhost:3000/quiz-attempts/<attempt-id>/answers \
+curl -X POST http://localhost:3001/quiz-attempts/<attempt-id>/answers \
   -H "Content-Type: application/json" \
   -d '{
     "questionId": "<question-id>",
@@ -342,7 +342,7 @@ curl -X POST http://localhost:3000/quiz-attempts/<attempt-id>/answers \
   }'
 
 # 3. Complete the quiz and get your score
-curl -X POST http://localhost:3000/quiz-attempts/<attempt-id>/complete
+curl -X POST http://localhost:3001/quiz-attempts/<attempt-id>/complete
 ```
 
 ## Time Spent

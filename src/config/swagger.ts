@@ -18,6 +18,11 @@ const options: swaggerJsdoc.Options = {
         description: "Development server",
       },
     ],
+    tags: [
+      { name: "Quizzes", description: "Quiz management endpoints" },
+      { name: "Questions", description: "Question management endpoints" },
+      { name: "Quiz Attempts", description: "Play quizzes and submit answers" },
+    ],
     components: {
       schemas: {
         Quiz: {
@@ -677,7 +682,7 @@ const options: swaggerJsdoc.Options = {
       },
     },
   },
-  apis: [],
+  apis: ["./src/routes/quiz-attempt-routes.ts"],
 };
 
 export const swaggerSpec = swaggerJsdoc(options);
