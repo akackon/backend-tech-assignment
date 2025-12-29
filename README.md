@@ -66,7 +66,7 @@ npm run debug
 - Quiz resource with title, description, and candidate instructions
 - Question resource supporting both free-text and multiple-choice questions
 - Full CRUD operations for both resources
-- MongoDB Atlas for data persistence
+- MongoDB for data persistence (Docker or Atlas)
 - OpenAPI v3 specification with interactive Swagger UI
 - JSON:API compliant responses
 
@@ -78,6 +78,8 @@ npm run debug
 - Environment variable configuration for security
 - Cascade cleanup when quizzes are deleted
 - **Quiz play functionality** - Start a quiz, answer questions, get scored
+- **Dockerized application** - Full Docker Compose setup with MongoDB and Express
+- **Swagger UI documentation** - Interactive API docs at `/api-docs`
 
 ## Instructions to Run
 
