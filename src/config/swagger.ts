@@ -49,6 +49,13 @@ const options: swaggerJsdoc.Options = {
               example:
                 "Answer all questions to the best of your ability. You have 30 minutes.",
             },
+            pointsPerQuestion: {
+              type: "number",
+              description:
+                "Points awarded for each correct answer (default: 10)",
+              example: 10,
+              minimum: 1,
+            },
           },
         },
         Question: {
@@ -174,32 +181,6 @@ const options: swaggerJsdoc.Options = {
     },
     paths: {
       "/quizzes": {
-        get: {
-          summary: "Get all quizzes",
-          tags: ["Quizzes"],
-          responses: {
-            "200": {
-              description: "A list of quizzes",
-              content: {
-                "application/json": {
-                  schema: {
-                    $ref: "#/components/schemas/JSONAPICollection",
-                  },
-                },
-              },
-            },
-            "500": {
-              description: "Internal server error",
-              content: {
-                "application/json": {
-                  schema: {
-                    $ref: "#/components/schemas/JSONAPIError",
-                  },
-                },
-              },
-            },
-          },
-        },
         post: {
           summary: "Create a new quiz",
           tags: ["Quizzes"],
@@ -230,6 +211,32 @@ const options: swaggerJsdoc.Options = {
                 "application/json": {
                   schema: {
                     $ref: "#/components/schemas/JSONAPIError",
+                  },
+                },
+              },
+            },
+            "500": {
+              description: "Internal server error",
+              content: {
+                "application/json": {
+                  schema: {
+                    $ref: "#/components/schemas/JSONAPIError",
+                  },
+                },
+              },
+            },
+          },
+        },
+        get: {
+          summary: "Get all quizzes",
+          tags: ["Quizzes"],
+          responses: {
+            "200": {
+              description: "A list of quizzes",
+              content: {
+                "application/json": {
+                  schema: {
+                    $ref: "#/components/schemas/JSONAPICollection",
                   },
                 },
               },
@@ -454,43 +461,6 @@ const options: swaggerJsdoc.Options = {
         },
       },
       "/questions": {
-        get: {
-          summary: "Get all questions",
-          tags: ["Questions"],
-          parameters: [
-            {
-              name: "quizId",
-              in: "query",
-              required: false,
-              schema: {
-                type: "string",
-              },
-              description: "Filter questions by quiz ID",
-            },
-          ],
-          responses: {
-            "200": {
-              description: "A list of questions",
-              content: {
-                "application/json": {
-                  schema: {
-                    $ref: "#/components/schemas/JSONAPICollection",
-                  },
-                },
-              },
-            },
-            "500": {
-              description: "Internal server error",
-              content: {
-                "application/json": {
-                  schema: {
-                    $ref: "#/components/schemas/JSONAPIError",
-                  },
-                },
-              },
-            },
-          },
-        },
         post: {
           summary: "Create a new question",
           tags: ["Questions"],
@@ -521,6 +491,43 @@ const options: swaggerJsdoc.Options = {
                 "application/json": {
                   schema: {
                     $ref: "#/components/schemas/JSONAPIError",
+                  },
+                },
+              },
+            },
+            "500": {
+              description: "Internal server error",
+              content: {
+                "application/json": {
+                  schema: {
+                    $ref: "#/components/schemas/JSONAPIError",
+                  },
+                },
+              },
+            },
+          },
+        },
+        get: {
+          summary: "Get all questions",
+          tags: ["Questions"],
+          parameters: [
+            {
+              name: "quizId",
+              in: "query",
+              required: false,
+              schema: {
+                type: "string",
+              },
+              description: "Filter questions by quiz ID",
+            },
+          ],
+          responses: {
+            "200": {
+              description: "A list of questions",
+              content: {
+                "application/json": {
+                  schema: {
+                    $ref: "#/components/schemas/JSONAPICollection",
                   },
                 },
               },

@@ -4,6 +4,7 @@ export interface IQuiz extends Document {
   title: string;
   description: string;
   instructions: string;
+  pointsPerQuestion: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -24,6 +25,12 @@ const quizSchema = new Schema<IQuiz>(
       type: String,
       required: true,
       trim: true,
+    },
+    pointsPerQuestion: {
+      type: Number,
+      required: false,
+      default: 10,
+      min: 1,
     },
   },
   {

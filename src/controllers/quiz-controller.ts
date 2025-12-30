@@ -6,7 +6,7 @@ import { QuestionModel } from "../models/question-model.js";
 export class QuizController {
   public async createQuiz(req: Request, res: Response) {
     try {
-      const { title, description, instructions } = req.body;
+      const { title, description, instructions, pointsPerQuestion } = req.body;
 
       if (!title || !description || !instructions) {
         return res.status(StatusCodes.BAD_REQUEST).json({
@@ -24,6 +24,7 @@ export class QuizController {
         title,
         description,
         instructions,
+        pointsPerQuestion,
       });
 
       res.status(StatusCodes.CREATED).json({
@@ -34,6 +35,7 @@ export class QuizController {
             title: quiz.title,
             description: quiz.description,
             instructions: quiz.instructions,
+            pointsPerQuestion: quiz.pointsPerQuestion,
             createdAt: quiz.createdAt,
             updatedAt: quiz.updatedAt,
           },
@@ -78,6 +80,7 @@ export class QuizController {
             title: quiz.title,
             description: quiz.description,
             instructions: quiz.instructions,
+            pointsPerQuestion: quiz.pointsPerQuestion,
             createdAt: quiz.createdAt,
             updatedAt: quiz.updatedAt,
           },
@@ -136,6 +139,7 @@ export class QuizController {
             title: quiz.title,
             description: quiz.description,
             instructions: quiz.instructions,
+            pointsPerQuestion: quiz.pointsPerQuestion,
             createdAt: quiz.createdAt,
             updatedAt: quiz.updatedAt,
           },
@@ -157,11 +161,11 @@ export class QuizController {
 
   public async updateQuiz(req: Request, res: Response) {
     try {
-      const { title, description, instructions } = req.body;
+      const { title, description, instructions, pointsPerQuestion } = req.body;
 
       const quiz = await QuizModel.findByIdAndUpdate(
         req.params.id,
-        { title, description, instructions },
+        { title, description, instructions, pointsPerQuestion },
         { new: true, runValidators: true }
       );
 
@@ -185,6 +189,7 @@ export class QuizController {
             title: quiz.title,
             description: quiz.description,
             instructions: quiz.instructions,
+            pointsPerQuestion: quiz.pointsPerQuestion,
             createdAt: quiz.createdAt,
             updatedAt: quiz.updatedAt,
           },

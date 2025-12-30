@@ -494,6 +494,99 @@ describe("Quiz API Integration Tests", () => {
     });
   });
 
+  describe("Custom Points Per Question", () => {
+    let customQuizId: string;
+    let customQuestionId: string;
+    let customAttemptId: string;
+
+    it("POST /quizzes - should create quiz with custom pointsPerQuestion", async () => {
+      const res = await request(app).post("/quizzes").send({
+        title: "High Stakes Quiz",
+        description: "Each question worth 25 points",
+        instructions: "Answer carefully!",
+        pointsPerQuestion: 25,
+      });
+
+      expect(res.status).toBe(201);
+      expect(res.body.data.attributes.pointsPerQuestion).toBe(25);
+      customQuizId = res.body.data.id;
+    });
+
+    it("GET /quizzes/:id - should return pointsPerQuestion in response", async () => {
+      const res = await request(app).get(`/quizzes/${customQuizId}`);
+
+      expect(res.status).toBe(200);
+      expect(res.body.data.attributes.pointsPerQuestion).toBe(25);
+    });
+
+    it("POST /quizzes - should default to 10 points when not specified", async () => {
+      const res = await request(app).post("/quizzes").send({
+        title: "Default Points Quiz",
+        description: "Uses default 10 points",
+        instructions: "Standard scoring",
+      });
+
+      expect(res.status).toBe(201);
+      expect(res.body.data.attributes.pointsPerQuestion).toBe(10);
+    });
+
+    it("POST /questions - should create question for custom points quiz", async () => {
+      const res = await request(app)
+        .post("/questions")
+        .send({
+          quizIds: [customQuizId],
+          text: "What is 2 + 2?",
+          type: "multiple-choice",
+          choices: [
+            { text: "4", isCorrect: true },
+            { text: "5", isCorrect: false },
+          ],
+        });
+
+      expect(res.status).toBe(201);
+      customQuestionId = res.body.data.id;
+    });
+
+    it("POST /quiz-attempts/:attemptId/answers - should award custom points for correct answer", async () => {
+      // Start the quiz
+      const playRes = await request(app).post(`/quizzes/${customQuizId}/play`);
+      expect(playRes.status).toBe(201);
+      customAttemptId = playRes.body.data.id;
+
+      // Submit correct answer
+      const answerRes = await request(app)
+        .post(`/quiz-attempts/${customAttemptId}/answers`)
+        .send({
+          questionId: customQuestionId,
+          answer: "4",
+        });
+
+      expect(answerRes.status).toBe(201);
+      expect(answerRes.body.data.attributes.isCorrect).toBe(true);
+      expect(answerRes.body.data.attributes.pointsEarned).toBe(25);
+      expect(answerRes.body.data.attributes.currentScore).toBe(25);
+    });
+
+    it("POST /quiz-attempts/:attemptId/complete - should show correct total with custom points", async () => {
+      const res = await request(app).post(
+        `/quiz-attempts/${customAttemptId}/complete`
+      );
+
+      expect(res.status).toBe(200);
+      expect(res.body.data.attributes.score).toBe(25);
+      expect(res.body.data.attributes.correctAnswers).toBe(1);
+    });
+
+    it("PATCH /quizzes/:id - should update pointsPerQuestion", async () => {
+      const res = await request(app).patch(`/quizzes/${customQuizId}`).send({
+        pointsPerQuestion: 50,
+      });
+
+      expect(res.status).toBe(200);
+      expect(res.body.data.attributes.pointsPerQuestion).toBe(50);
+    });
+  });
+
   describe("Delete Operations", () => {
     it("DELETE /questions/:id - should delete a question", async () => {
       const questionToDelete = questionIds[0];

@@ -25,6 +25,7 @@ The assignment is to build a light weight restful API server to power a quiz UI.
 - Environment variable configuration for security
 - Cascade cleanup when quizzes are deleted
 - **Quiz play functionality** - Start a quiz, answer questions, get scored
+- **Configurable scoring** - Set custom points per question at the quiz level
 - **Dockerized application** - Full Docker Compose setup with MongoDB and Express
 - **Swagger UI documentation** - Interactive API docs at `/api-docs`
 
@@ -251,19 +252,20 @@ docker-compose up -d --build app
 Create a quiz:
 
 ```bash
-curl -X POST http://localhost:3000/quizzes \
+curl -X POST http://localhost:3001/quizzes \
   -H "Content-Type: application/json" \
   -d '{
     "title": "JavaScript Basics",
     "description": "Test your knowledge of JavaScript fundamentals",
-    "instructions": "Answer all questions. You have 30 minutes."
+    "instructions": "Answer all questions. You have 30 minutes.",
+    "pointsPerQuestion": 10
   }'
 ```
 
 Create a multiple-choice question:
 
 ```bash
-curl -X POST http://localhost:3000/questions \
+curl -X POST http://localhost:3001/questions \
   -H "Content-Type: application/json" \
   -d '{
     "quizIds": ["<quiz-id>"],
@@ -293,6 +295,148 @@ curl -X POST http://localhost:3001/quiz-attempts/<attempt-id>/answers \
 # 3. Complete the quiz and get your score
 curl -X POST http://localhost:3001/quiz-attempts/<attempt-id>/complete
 ```
+
+## Demo Data for Testing
+
+Below is sample data you can use to quickly test the API. Copy and paste these JSON payloads into Swagger UI or use the curl commands.
+
+### 1. Create a Quiz
+
+```json
+{
+  "title": "Web Development Fundamentals",
+  "description": "Test your knowledge of HTML, CSS, and JavaScript basics",
+  "instructions": "Answer all questions carefully. Multiple-choice questions have only one correct answer. For free-text questions, provide a clear and concise answer.",
+  "pointsPerQuestion": 10
+}
+```
+
+> **Note:** `pointsPerQuestion` is optional and defaults to 10 if not specified.
+
+### 2. Create Questions
+
+After creating the quiz, copy the returned `id` and use it in the `quizIds` array below.
+
+**Multiple-Choice Question 1 (HTML):**
+
+```json
+{
+  "quizIds": ["<paste-quiz-id-here>"],
+  "text": "What does HTML stand for?",
+  "type": "multiple-choice",
+  "choices": [
+    { "text": "Hyper Text Markup Language", "isCorrect": true },
+    { "text": "High Tech Modern Language", "isCorrect": false },
+    { "text": "Home Tool Markup Language", "isCorrect": false },
+    { "text": "Hyperlinks and Text Markup Language", "isCorrect": false }
+  ]
+}
+```
+
+**Multiple-Choice Question 2 (CSS):**
+
+```json
+{
+  "quizIds": ["<paste-quiz-id-here>"],
+  "text": "Which CSS property is used to change the text color of an element?",
+  "type": "multiple-choice",
+  "choices": [
+    { "text": "font-color", "isCorrect": false },
+    { "text": "text-color", "isCorrect": false },
+    { "text": "color", "isCorrect": true },
+    { "text": "foreground-color", "isCorrect": false }
+  ]
+}
+```
+
+**Free-Text Question 3 (JavaScript):**
+
+```json
+{
+  "quizIds": ["<paste-quiz-id-here>"],
+  "text": "What is a closure in JavaScript?",
+  "type": "free-text",
+  "correctAnswer": "A closure is a function that has access to variables from its outer (enclosing) scope, even after the outer function has returned."
+}
+```
+
+**Multiple-Choice Question 4 (JavaScript):**
+
+```json
+{
+  "quizIds": ["<paste-quiz-id-here>"],
+  "text": "Which of the following is NOT a JavaScript data type?",
+  "type": "multiple-choice",
+  "choices": [
+    { "text": "String", "isCorrect": false },
+    { "text": "Boolean", "isCorrect": false },
+    { "text": "Float", "isCorrect": true },
+    { "text": "Symbol", "isCorrect": false }
+  ]
+}
+```
+
+**Free-Text Question 5 (JavaScript):**
+
+```json
+{
+  "quizIds": ["<paste-quiz-id-here>"],
+  "text": "Explain the difference between let, const, and var in JavaScript.",
+  "type": "free-text",
+  "correctAnswer": "var is function-scoped and can be redeclared. let is block-scoped and can be reassigned but not redeclared. const is block-scoped and cannot be reassigned or redeclared."
+}
+```
+
+### 3. Play the Quiz
+
+**Start a quiz attempt:**
+
+```bash
+POST /quizzes/<quiz-id>/play
+```
+
+**Submit answers** (use question IDs from the play response):
+
+```json
+{
+  "questionId": "<question-id>",
+  "answer": "Hyper Text Markup Language"
+}
+```
+
+**Complete the quiz:**
+
+```bash
+POST /quiz-attempts/<attempt-id>/complete
+```
+
+### 4. Expected Results
+
+After completing a quiz with a mix of correct/wrong answers, you'll see:
+
+```json
+{
+  "data": {
+    "type": "quiz-attempts",
+    "id": "<attempt-id>",
+    "attributes": {
+      "status": "completed",
+      "score": 20,
+      "totalAnswers": 5,
+      "correctAnswers": 2,
+      "accuracy": 40
+    }
+  }
+}
+```
+
+| Answer Result                       | Points                             |
+| ----------------------------------- | ---------------------------------- |
+| ✅ Correct (multiple-choice)        | +`pointsPerQuestion` (default: 10) |
+| ❌ Wrong                            | 0                                  |
+| ✅ Correct (free-text, exact match) | +`pointsPerQuestion` (default: 10) |
+
+> **Note:** The `pointsPerQuestion` value is set when creating the quiz. Free-text questions require exact string matching. Consider this a future enhancement opportunity for fuzzy matching or AI-powered grading.
 
 ## Time Spent
 
@@ -327,7 +471,10 @@ Due to the 3-hour time constraint, the following trade-offs were made:
      - Many-to-many relationships between quizzes and questions
      - JSON:API compliance verification
      - Cascade deletion behavior
+     - Custom points per question scoring
+     - Quiz attempt flow (start, answer, complete)
      - Edge cases (2 quizzes, 5 questions each, 5 shared questions)
+   - **34 integration tests** all passing
    - Would add: More granular unit tests for controllers and models, edge case testing, error scenario testing
 
 4. **Pagination** - GET endpoints return all records without pagination.
@@ -377,6 +524,24 @@ Due to the 3-hour time constraint, the following trade-offs were made:
 - Analytics and reporting dashboard
 - Quiz versioning
 
+### Answer Grading Improvements
+
+- **Fuzzy matching** for free-text answers (e.g., using Levenshtein distance or cosine similarity)
+- **AI-powered grading** using LLMs to evaluate semantic correctness of free-text responses
+- **Partial credit** scoring for partially correct answers
+- **Case-insensitive matching** and trimming of whitespace
+- **Synonym recognition** for accepting alternative correct answers
+- **Configurable grading modes** per question (strict, lenient, AI-assisted)
+
+### Scoring Enhancements
+
+- ✅ **Quiz-level point values** - Implemented! Set `pointsPerQuestion` when creating a quiz
+- **Per-question point values** - Allow each question to have its own point value instead of using the quiz-level default
+- **Weighted scoring** - Different question types could have different weights
+- **Negative marking** - Optional penalty for incorrect answers
+- **Bonus points** - Time-based bonuses for quick correct answers
+- **Score normalization** - Percentage-based scoring alongside absolute points
+
 ### Code Quality
 
 - Add comprehensive logging (Winston or Pino)
@@ -391,30 +556,39 @@ Due to the 3-hour time constraint, the following trade-offs were made:
 - **Language:** TypeScript
 - **Framework:** Express.js
 - **Database:** MongoDB (via Mongoose ODM)
+- **Containerization:** Docker & Docker Compose
 - **Documentation:** Swagger UI with OpenAPI 3.0
+- **Testing:** Jest with Supertest
 - **Environment:** dotenv for configuration
 
 ## Project Structure
 
 ```text
-src/
-├── config/
-│   ├── database.ts          # MongoDB connection setup
-│   └── swagger.ts           # OpenAPI/Swagger configuration
-├── controllers/
-│   ├── quiz-controller.ts
-│   ├── question-controller.ts
-│   └── quiz-attempt-controller.ts
-├── models/
-│   ├── quiz-model.ts
-│   ├── question-model.ts
-│   └── quiz-attempt-model.ts
-├── routes/
-│   ├── quiz-routes.ts
-│   ├── question-routes.ts
-│   └── quiz-attempt-routes.ts
-├── __tests__/
-│   ├── api.test.ts          # Integration tests
-│   └── setup.ts             # Test database setup
-└── index.ts                 # Application entry point
+├── Dockerfile               # Node.js container image definition
+├── docker-compose.yml       # Multi-container orchestration (MongoDB, app, tests)
+├── package.json             # Dependencies and npm scripts
+├── tsconfig.json            # TypeScript compiler configuration
+├── jest.config.cjs          # Jest test runner configuration
+├── mongo-init/              # MongoDB initialization scripts for Docker
+├── scripts/                 # Utility scripts (wait-for-it, etc.)
+└── src/
+    ├── index.ts             # Application entry point, Express server setup
+    ├── config/
+    │   ├── database.ts      # MongoDB/Mongoose connection setup
+    │   └── swagger.ts       # OpenAPI 3.0 specification and Swagger UI config
+    ├── controllers/
+    │   ├── quiz-controller.ts          # Quiz CRUD operations handler
+    │   ├── question-controller.ts      # Question CRUD operations handler
+    │   └── quiz-attempt-controller.ts  # Quiz play, answers, scoring logic
+    ├── models/
+    │   ├── quiz-model.ts               # Quiz Mongoose schema and model
+    │   ├── question-model.ts           # Question schema (supports many-to-many)
+    │   └── quiz-attempt-model.ts       # Quiz attempt tracking and answers
+    ├── routes/
+    │   ├── quiz-routes.ts              # Quiz API endpoint definitions
+    │   ├── question-routes.ts          # Question API endpoint definitions
+    │   └── quiz-attempt-routes.ts      # Quiz play/attempt API endpoints
+    └── __tests__/
+        ├── api.test.ts      # Comprehensive integration tests (34 tests)
+        └── setup.ts         # Test environment and database setup
 ```

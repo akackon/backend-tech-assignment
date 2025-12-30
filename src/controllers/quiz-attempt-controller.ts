@@ -4,7 +4,7 @@ import { QuizAttemptModel } from "../models/quiz-attempt-model.js";
 import { QuizModel } from "../models/quiz-model.js";
 import { QuestionModel } from "../models/question-model.js";
 
-const POINTS_PER_CORRECT_ANSWER = 10;
+const DEFAULT_POINTS_PER_QUESTION = 10;
 
 export class QuizAttemptController {
   /**
@@ -100,6 +100,11 @@ export class QuizAttemptController {
         });
       }
 
+      // Get the quiz to find points per question
+      const quiz = await QuizModel.findById(attempt.quizId);
+      const pointsPerQuestion =
+        quiz?.pointsPerQuestion ?? DEFAULT_POINTS_PER_QUESTION;
+
       // Check if question already answered
       const existingAnswer = attempt.answers.find(
         (a) => a.questionId.toString() === questionId
@@ -148,7 +153,7 @@ export class QuizAttemptController {
 
       // Update score if correct
       if (isCorrect) {
-        attempt.score += POINTS_PER_CORRECT_ANSWER;
+        attempt.score += pointsPerQuestion;
       }
 
       await attempt.save();
@@ -161,7 +166,7 @@ export class QuizAttemptController {
             questionId,
             answer,
             isCorrect,
-            pointsEarned: isCorrect ? POINTS_PER_CORRECT_ANSWER : 0,
+            pointsEarned: isCorrect ? pointsPerQuestion : 0,
             currentScore: attempt.score,
           },
         },
